@@ -1,7 +1,9 @@
 package edu.rpi.tw.vsto.resources;
 
 import edu.rpi.tw.vsto.model.Instrument;
+import edu.rpi.tw.vsto.model.Parameter;
 import edu.rpi.tw.vsto.repositories.IInstrumentRepository;
+import edu.rpi.tw.vsto.repositories.IParameterRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -23,6 +25,8 @@ public class VstoWebServicesResource
 
     @Autowired
     IInstrumentRepository instrumentRepository;
+    @Autowired
+    IParameterRepository parameterRepository;
 
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/instruments", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
@@ -31,7 +35,6 @@ public class VstoWebServicesResource
         try
         {
             List<Instrument> instruments = instrumentRepository.getInstruments(false);
-            instruments = instrumentRepository.getInstruments(false);
             JSONArray jinstruments = new JSONArray();
             if(instruments != null) {
                 for(Instrument instrument : instruments) {
@@ -50,6 +53,7 @@ public class VstoWebServicesResource
         }
         return response;
     }
+
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/instrument/{kinst:.*}", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public Instrument getInstrument(@PathVariable(value="kinst") final int kinst) {
@@ -59,5 +63,34 @@ public class VstoWebServicesResource
         }
         return null;
     }
+
+    @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
+    @RequestMapping( value = "/parameters", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public String getParameters() {
+        String response = "{}";
+        try
+        {
+            List<Parameter> parameters = parameterRepository.getParameters(false);
+            JSONArray jparameters = new JSONArray();
+            if(parameters != null) {
+                for(Parameter parameter : parameters) {
+                    if(!parameter.getLongName().equals("UNDEFINED"))
+                    {
+                        JSONObject jparameter = new JSONObject();
+                        jparameter.put( "id", parameter.getId() );
+                        jparameter.put( "name", parameter.getLongName() );
+                        jparameters.put( jparameter );
+                    }
+                }
+            }
+            JSONObject jobj = new JSONObject();
+            jobj.put( "parameters", jparameters);
+            response = jobj.toString();
+        } catch(Exception e) {
+            log.error("Failed to build the response " + e.getMessage());
+        }
+        return response;
+    }
+
 }
 

@@ -21,9 +21,13 @@ public final class ParameterRepository implements IParameterRepository {
 	private static final ParameterMapper PARAMETER_MAPPER = new ParameterMapper();
 
 	private static final StringBuffer GET_PARAMETERS = new StringBuffer()
-			.append("select * from tbl_parameter_code parameter order by parameter_id");
+			.append("select * from tbl_parameter_code parameter where parameter_id > 0 order by parameter_id");
+
+	private static final StringBuffer GET_ERROR_PARAMETERS = new StringBuffer()
+			.append("select * from tbl_parameter_code parameter where parameter_id < 0 order by parameter_id desc");
 
 	private Map<Integer, Parameter> parameterMap = null;
+	private Map<Integer, Parameter> errorParameterMap = null;
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
@@ -49,10 +53,17 @@ public final class ParameterRepository implements IParameterRepository {
 		final Map<String, Object> params = new HashMap<>();
 
 		List<Parameter> parameters = null;
+		List<Parameter> errorParameters = null;
 
 		if(refresh || parameterMap == null) {
 			try {
 				parameters = this.jdbcTemplate.query(GET_PARAMETERS.toString(), params, PARAMETER_MAPPER);
+			} catch (final EmptyResultDataAccessException erdae) {
+				log.error("Failed to retrieve the parameters " + erdae.getMessage());
+				//NOOP
+			}
+			try {
+				errorParameters = this.jdbcTemplate.query(GET_ERROR_PARAMETERS.toString(), params, PARAMETER_MAPPER);
 			} catch (final EmptyResultDataAccessException erdae) {
 				log.error("Failed to retrieve the parameters " + erdae.getMessage());
 				//NOOP
@@ -67,11 +78,29 @@ public final class ParameterRepository implements IParameterRepository {
 					if(parameterMap == null) parameterMap = new TreeMap<>();
 					parameterMap.put(parameter.getId(), parameter);
 				}
+				errorParameterMap = null;
+				if(errorParameters != null && errorParameters.size() > 0)
+				{
+					for( Parameter parameter : errorParameters )
+					{
+						loadExternals( parameter );
+						if( errorParameterMap == null ) errorParameterMap = new TreeMap<>();
+						errorParameterMap.put( parameter.getId(), parameter );
+						parameters.add(parameter);
+					}
+				} else {
+					log.info("no error parameters");
+				}
 			}
 		} else if(parameterMap != null) {
 			parameters = new ArrayList<>();
 			for(Parameter parameter : parameterMap.values()) {
 				parameters.add(parameter);
+			}
+			if(errorParameterMap != null) {
+				for( Parameter parameter : errorParameterMap.values() ) {
+					parameters.add( parameter );
+				}
 			}
 		}
 

@@ -17,7 +17,7 @@ public class ParameterMapper extends BeanPropertyRowMapper<Parameter>
 
 	@Override
 	public Parameter mapRow(final ResultSet rs, final int rowNumber) throws SQLException {
-		final Parameter parameter = new Parameter(rs.getInt("parameter.id"),
+		final Parameter parameter = new Parameter(rs.getInt("parameter.parameter_id"),
 				rs.getString("parameter.long_name"),
 				rs.getString("parameter.short_name"),
 				rs.getString("parameter.madrigal_name"),
