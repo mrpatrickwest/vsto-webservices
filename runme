@@ -1,4 +1,11 @@
 #!/bin/sh
 
-java -jar build/libs/vsto-web-services-0.0.1-SNAPSHOT.jar
+myid=`id -u`
+if [ $myid -ne 0 ]
+then
+    echo "Must be run as root"
+    exit 1
+fi
+
+nohup java -jar build/libs/vsto-web-services-0.0.1-SNAPSHOT.jar > /var/log/vsto/webservices.log 2>&1 &
 
