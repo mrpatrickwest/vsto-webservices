@@ -6,10 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * AccountMapper
- * Account to domain object mapper
+ * Parameter Mapper
  *
- * @author john
+ * @author pwest
  *
  */
 public class ParameterMapper extends BeanPropertyRowMapper<Parameter>
@@ -17,13 +16,13 @@ public class ParameterMapper extends BeanPropertyRowMapper<Parameter>
 
 	@Override
 	public Parameter mapRow(final ResultSet rs, final int rowNumber) throws SQLException {
-		final Parameter parameter = new Parameter(rs.getInt("parameter.parameter_id"),
-				rs.getString("parameter.long_name"),
-				rs.getString("parameter.short_name"),
-				rs.getString("parameter.madrigal_name"),
-				rs.getString("parameter.units"),
-				rs.getString("parameter.scale"),
-				rs.getInt("parameter.note_id"));
+		final Parameter parameter = new Parameter(rs.getInt("pc.parameter_id"),
+				rs.getString("pc.long_name"),
+				rs.getString("pc.short_name"),
+				rs.getString("pc.madrigal_name"),
+				rs.getString("pc.units"),
+				rs.getString("pc.scale"),
+				rs.getInt("pc.note_id"));
 
 		return parameter;
 	}

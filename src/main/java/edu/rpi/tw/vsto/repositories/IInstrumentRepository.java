@@ -31,6 +31,30 @@ public interface IInstrumentRepository {
 	public List<Instrument> getInstruments(boolean refresh);
 
 	/**
+	 * @param startdateid
+	 * @param enddateid
+	 * @return
+	 */
+	public List<Instrument> getInstrumentsGivenDate(final String startdateid,
+												    final String enddateid);
+
+	/**
+	 * @param params
+	 * @return
+	 */
+	public List<Instrument> getInstrumentsGivenParams(final String params);
+
+	/**
+	 * @param startdateid
+	 * @param enddateid
+	 * @param params
+	 * @return
+	 */
+	public List<Instrument> getInstrumentsGivenDateAndParams(final String startdateid,
+														     final String enddateid,
+														     final String params);
+
+	/**
 	 * @return
 	 */
 	public long totalInstruments();

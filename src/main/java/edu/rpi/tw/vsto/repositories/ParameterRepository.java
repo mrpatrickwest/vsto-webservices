@@ -20,11 +20,36 @@ public final class ParameterRepository implements IParameterRepository {
 
 	private static final ParameterMapper PARAMETER_MAPPER = new ParameterMapper();
 
+	private static final StringBuffer PARAMETER_SELECT = new StringBuffer()
+			.append("select distinct pc.parameter_id, pc.long_name, pc.short_name, pc.madrigal_name, pc.units, pc.scale, pc.note_id");
+
 	private static final StringBuffer GET_PARAMETERS = new StringBuffer()
-			.append("select * from tbl_parameter_code parameter where parameter_id > 0 order by parameter_id");
+			.append("select * from tbl_parameter_code pc where parameter_id > 0 order by parameter_id");
 
 	private static final StringBuffer GET_ERROR_PARAMETERS = new StringBuffer()
-			.append("select * from tbl_parameter_code parameter where parameter_id < 0 order by parameter_id desc");
+			.append("select * from tbl_parameter_code pc where parameter_id < 0 order by parameter_id desc");
+
+	private static final StringBuffer GET_PARAMS_GIVEN_DATE = new StringBuffer()
+			.append(PARAMETER_SELECT)
+			.append(" from tbl_parameter_code pc, tbl_record_info ri, tbl_record_type rt, tbl_file_info fi,")
+			.append(" tbl_date_in_file dif where pc.LONG_NAME!=\"UNDEFINED\" AND pc.PARAMETER_ID=ri.PARAMETER_ID")
+			.append(" AND ri.RECORD_TYPE_ID=rt.RECORD_TYPE_ID AND rt.RECORD_TYPE_ID=fi.RECORD_TYPE_ID")
+			.append(" AND fi.RECORD_IN_FILE_ID=dif.RECORD_IN_FILE_ID AND dif.DATE_ID >= :startdateid")
+			.append(" AND dif.DATE_ID <= :enddateid order by ABS(pc.PARAMETER_ID) ASC");
+
+	private static final StringBuffer GET_PARAMS_GIVEN_KINST_AND_DATE = new StringBuffer()
+			.append(PARAMETER_SELECT)
+			.append(" from tbl_parameter_code pc, tbl_record_info ri, tbl_record_type rt, tbl_file_info fi,")
+			.append(" tbl_date_in_file dif where pc.LONG_NAME!=\"UNDEFINED\" AND pc.PARAMETER_ID=ri.PARAMETER_ID")
+			.append(" AND ri.RECORD_TYPE_ID=rt.RECORD_TYPE_ID AND rt.RECORD_TYPE_ID=fi.RECORD_TYPE_ID")
+			.append(" AND fi.RECORD_IN_FILE_ID=dif.RECORD_IN_FILE_ID AND dif.DATE_ID >= :startdateid")
+			.append(" AND dif.DATE_ID <= :enddateid AND rt.KINST = :kinst order by ABS(pc.PARAMETER_ID) ASC");
+
+	private static final StringBuffer GET_PARAMS_GIVEN_KINST = new StringBuffer()
+			.append(PARAMETER_SELECT)
+			.append(" FROM tbl_parameter_code pc, tbl_record_info ri, tbl_record_type rt")
+			.append(" WHERE pc.PARAMETER_ID=ri.PARAMETER_ID AND ri.RECORD_TYPE_ID=rt.RECORD_TYPE_ID")
+			.append(" AND rt.KINST = :kinst order by ABS(pc.PARAMETER_ID) ASC");
 
 	private Map<Integer, Parameter> parameterMap = null;
 	private Map<Integer, Parameter> errorParameterMap = null;
@@ -106,6 +131,63 @@ public final class ParameterRepository implements IParameterRepository {
 
 		return parameters;
     }
+
+	/**
+	 * @param kinst id of an instrument
+	 * @return
+	 */
+	public List<Parameter> getParametersGivenInstrument(final String kinst) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("kinst", kinst);
+		List<Parameter> parameters = null;
+		try {
+			parameters = this.jdbcTemplate.query(GET_PARAMS_GIVEN_KINST.toString(), params, PARAMETER_MAPPER);
+		} catch (final EmptyResultDataAccessException erdae) {
+			log.error("Failed to retrieve the parameters " + erdae.getMessage());
+			//NOOP
+		}
+		return parameters;
+	}
+
+	/**
+	 * @param kinst id of an instrument
+	 * @param startdateid id of the start date
+	 * @param enddateid id of the end date
+	 * @return
+	 */
+	public List<Parameter> getParametersGivenInstrumentAndDate(final String kinst, final String startdateid, final String enddateid) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("kinst", kinst);
+		params.put("startdateid", startdateid);
+		params.put("enddateid", enddateid);
+		List<Parameter> parameters = null;
+		try {
+			parameters = this.jdbcTemplate.query(GET_PARAMS_GIVEN_KINST_AND_DATE.toString(), params, PARAMETER_MAPPER);
+		} catch (final EmptyResultDataAccessException erdae) {
+			log.error("Failed to retrieve the parameters " + erdae.getMessage());
+			//NOOP
+		}
+		return parameters;
+	}
+
+	/**
+	 * @param startdateid id of the start date
+	 * @param enddateid id of the end date
+	 * @return
+	 */
+	public List<Parameter> getParametersGivenDate(final String startdateid, final String enddateid) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("startdateid", startdateid);
+		params.put("enddateid", enddateid);
+		List<Parameter> parameters = null;
+		try {
+			parameters = this.jdbcTemplate.query(GET_PARAMS_GIVEN_DATE.toString(), params, PARAMETER_MAPPER);
+		} catch (final EmptyResultDataAccessException erdae) {
+			log.error("Failed to retrieve the parameters " + erdae.getMessage());
+			//NOOP
+		}
+		return parameters;
+	}
 
     private void loadExternals(Parameter parameter) {
 		if(parameter.getNote() == null) parameter.setNote(this.noteRepository.findNote(parameter.getNoteId()));

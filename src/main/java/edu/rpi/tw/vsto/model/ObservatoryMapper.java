@@ -6,10 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * AccountMapper
- * Account to domain object mapper
+ * Observatory Mapper
  *
- * @author john
+ * @author pwest
  *
  */
 public class ObservatoryMapper extends BeanPropertyRowMapper<Observatory>

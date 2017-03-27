@@ -6,10 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * AccountMapper
- * Account to domain object mapper
+ * Note Mapper
  *
- * @author john
+ * @author pwest
  *
  */
 public class NoteMapper extends BeanPropertyRowMapper<Note>

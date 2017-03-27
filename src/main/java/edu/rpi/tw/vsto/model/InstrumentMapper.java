@@ -6,10 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * AccountMapper
- * Account to domain object mapper
+ * Instrument Mapper
  *
- * @author john
+ * @author pwest
  *
  */
 public class InstrumentMapper extends BeanPropertyRowMapper<Instrument>
