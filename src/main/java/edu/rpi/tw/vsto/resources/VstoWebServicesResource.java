@@ -143,6 +143,16 @@ public class VstoWebServicesResource
     }
 
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
+    @RequestMapping( value = "/parameter/{param:.*}", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public Parameter getParameter(@PathVariable(value="param") final int param) {
+        Parameter parameter = parameterRepository.findParameter( param );
+        if(parameter != null) {
+            return parameter;
+        }
+        return null;
+    }
+
+    @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/years", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getYears(@RequestParam(value = "kinst", required = false, defaultValue = "") final String kinst,
                            @RequestParam(value = "params", required = false, defaultValue = "") final String params)
