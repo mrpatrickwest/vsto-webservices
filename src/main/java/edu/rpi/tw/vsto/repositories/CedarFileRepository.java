@@ -31,11 +31,12 @@ public final class CedarFileRepository implements ICedarFileRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-	/**
+	/** Retrieve the list of files that contains data for the given parameters
+   *
 	 * @param kinst instrument id
 	 * @param startdateid id of the starting date
 	 * @param enddateid id of the ending date
-	 * @return list of files
+	 * @return list of CedarFile objects
 	 */
 	public List<CedarFile> getFiles(final String kinst, final String startdateid, final String enddateid) {
 		List<CedarFile> files = null;

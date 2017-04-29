@@ -98,7 +98,8 @@ public final class DateRepository implements IDateRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-	/**
+	/** Retrieves the list of all years for which there are data points
+   *
 	 * @param kinst instrument id
 	 * @param parameters comma separated list of params
 	 * @return list of years in the VstoDate object
@@ -129,7 +130,8 @@ public final class DateRepository implements IDateRepository {
 		return dates;
     }
 
-	/**
+	/** Retrieves the list of all months in the given year for which there are data points
+   *
 	 * @param kinst instrument id
 	 * @param parameters comma separated list of params
 	 * @param year selected year
@@ -162,11 +164,12 @@ public final class DateRepository implements IDateRepository {
 		return dates;
     }
 
-	/**
-     * @param kinst instrument id
-     * @param parameters comma separated list of params
-     * @param year selected year
-     * @param month selected month
+	/** Retrieves the list of all days of the year and month for which there are data points
+   *
+   * @param kinst instrument id
+   * @param parameters comma separated list of params
+   * @param year selected year
+   * @param month selected month
 	 * @return list of days in the VstoDate object
 	 */
 	public List<VstoDate> getDays(String kinst, String parameters, String year, String month) {
@@ -197,7 +200,8 @@ public final class DateRepository implements IDateRepository {
 		return dates;
     }
 
-	/**
+	/** Retrieve the date id for the given year, month and day
+   *
 	 * @param year selected year
 	 * @param month selected month
 	 * @param day selected day

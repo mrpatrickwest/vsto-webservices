@@ -19,39 +19,41 @@ public final class ObservatoryRepository implements IObservatoryRepository {
 
     public final Logger log = LoggerFactory.getLogger(ObservatoryRepository.class);
 
-	private static final ObservatoryMapper OBSERVATORY_MAPPER = new ObservatoryMapper();
+    private static final ObservatoryMapper OBSERVATORY_MAPPER = new ObservatoryMapper();
 
-	private static final StringBuffer GET_OBSERVATORIES = new StringBuffer()
-			.append("select * from tbl_observatory observatory order by alpha_code");
+    private static final StringBuffer GET_OBSERVATORIES = new StringBuffer()
+            .append("select * from tbl_observatory observatory order by alpha_code");
 
-	private Map<Integer, Observatory> observatoryMap = null;
+    private Map<Integer, Observatory> observatoryMap = null;
 
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
-	@Autowired
-	INoteRepository noteRepository;
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
+    @Autowired
+    INoteRepository noteRepository;
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	public Observatory findObservatory(int id) {
+    /** Retrieve the specified Observatory
+     *
+     * @param id identifier of the observatory of interest
+     * @return Observatory object with the given identifier
+     */
+    public Observatory findObservatory(int id) {
         Observatory observatory = null;
-		getObservatories(false);
-		if(observatoryMap != null) observatory = observatoryMap.get(id);
+        getObservatories(false);
+        if(observatoryMap != null) observatory = observatoryMap.get(id);
         return observatory;
     }
 
-	/**
-     * @param refresh
-	 * @return
-	 */
-	public List<Observatory> getObservatories(boolean refresh) {
-		final Map<String, Object> params = new HashMap<>();
+    /** Retrieve the list of observatories in the system
+     *
+     * @param refresh if true then refresh the list from the database
+     * @return List of Observatory objects for all observatories
+     */
+    public List<Observatory> getObservatories(boolean refresh) {
+        final Map<String, Object> params = new HashMap<>();
 
-		List<Observatory> observatories = null;
+        List<Observatory> observatories = null;
 
-		if(refresh || observatoryMap == null) {
+        if(refresh || observatoryMap == null) {
             try {
                 observatories = this.jdbcTemplate.query(GET_OBSERVATORIES.toString(), params, OBSERVATORY_MAPPER);
             } catch (final EmptyResultDataAccessException erdae) {
@@ -60,15 +62,15 @@ public final class ObservatoryRepository implements IObservatoryRepository {
             }
         }
 
-		if(observatories != null && observatories.size() > 0) {
-			if(refresh || observatoryMap == null) {
-				observatoryMap = null;
-				for (Observatory observatory : observatories) {
-					loadExternals(observatory);
-					if(observatoryMap == null) observatoryMap = new TreeMap<>();
-					observatoryMap.put(observatory.getId(), observatory);
-				}
-			}
+        if(observatories != null && observatories.size() > 0) {
+            if(refresh || observatoryMap == null) {
+                observatoryMap = null;
+                for (Observatory observatory : observatories) {
+                    loadExternals(observatory);
+                    if(observatoryMap == null) observatoryMap = new TreeMap<>();
+                    observatoryMap.put(observatory.getId(), observatory);
+                }
+            }
         } else if(observatoryMap != null) {
             observatories = new ArrayList<>();
             for(Observatory observatory : observatoryMap.values()) {
@@ -76,29 +78,29 @@ public final class ObservatoryRepository implements IObservatoryRepository {
             }
         }
 
-		return observatories;
+        return observatories;
     }
 
     private void loadExternals(Observatory observatory) {
-		if(observatory.getNote() == null) observatory.setNote(this.noteRepository.findNote(observatory.getNoteId()));
+        if(observatory.getNote() == null) observatory.setNote(this.noteRepository.findNote(observatory.getNoteId()));
 
-	}
+    }
 
-	/**
-	 * @return
-	 */
-	public long totalObservatories() {
-		long num = 0;
-		List<Observatory> observatories = getObservatories(false);
-		if(observatories != null) num = observatories.size();
+    /** Retrieve the count of observatories in the system
+     *
+     * @return count of all observatories
+     */
+    public long totalObservatories() {
+        long num = 0;
+        List<Observatory> observatories = getObservatories(false);
+        if(observatories != null) num = observatories.size();
         return num;
     }
 
-	/**
-	 * @return
-	 */
-	public void refreshObservatories() {
-		getObservatories(true);
+    /** Refresh the list of observatories from the database
+     */
+    public void refreshObservatories() {
+        getObservatories(true);
     }
 }
 

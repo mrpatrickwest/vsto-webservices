@@ -6,31 +6,35 @@ import java.util.List;
 
 public interface INoteRepository {
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	public Note findNote(int id);
+    /** Retrieve the specified note
+     *
+     * @param id identifier of the note to retrieve
+     * @return Note object with the given identifier
+     */
+    public Note findNote(int id);
 
-	/**
-	 * @return
-	 */
-	public List<Note> getNotes(boolean refresh);
+    /** Retrieves all of the notes in the system
+     *
+     * @param refresh if true then refresh the notes from the database
+     * @return List of Note objects for all notes
+     */
+    public List<Note> getNotes(boolean refresh);
 
-	/**
-     * @param note
-	 * @return
-	 */
-	public List<Note> getNotesGivenNote(Note note);
+    /** Retrieve all of the followup notes of the given note
+     *
+     * @param note parent note
+     * @return List of Note objects
+     */
+    public List<Note> getNotesGivenNote(Note note);
 
-	/**
-	 * @return
-	 */
-	public long totalNotes();
+    /** Retrieve the count of all notes
+     *
+     * @return count of all notes
+     */
+    public long totalNotes();
 
-	/**
-	 * @return
-	 */
-	public void refreshNotes();
+    /** Refresh the notes from the database
+     */
+    public void refreshNotes();
 }
 

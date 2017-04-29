@@ -59,10 +59,11 @@ public final class InstrumentRepository implements IInstrumentRepository {
     @Autowired
     INoteRepository noteRepository;
 
-    /**
-     * @param kinst
-     * @return
-     */
+    /** Retrieve the instrument object for the specified identifier
+     *
+	   * @param kinst instrument identifier
+	   * @return Instrument object for that instrument
+	   */
     @Override
     public Instrument findInstrument(int kinst) {
         Instrument instrument = null;
@@ -77,10 +78,11 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instrument;
     }
 
-    /**
-     * @param classType
-     * @return
-     */
+	   /** Retrieve the list of all instruments for the given class
+      *
+	    * @param classType class of interest
+	    * @return List of Instrument objects that have the given class
+	    */
     @Override
     public List<Instrument> findInstrumentsByClassType(String classType) {
         List<Instrument> instruments = null;
@@ -92,10 +94,11 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
-    /**
-     * @param opMode
-     * @return
-     */
+    /** Retrieve the list of all instruments given the operating mode
+     *
+	   * @param opMode operating mode of interest
+	   * @return List of Instrument objects that have this operating mode
+	   */
     @Override
     public List<Instrument> findInstrumentsByOpMode(int opMode) {
         List<Instrument> instruments = null;
@@ -107,9 +110,11 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
-    /**
-     * @return
-     */
+	  /** Retrieve the list of all instruments
+     *
+     * @param refresh if true then go back to the database to retrieve the list
+	   * @return List of instrument objects that meet the requirements
+	   */
     @Override
     public List<Instrument> getInstruments(boolean refresh) {
         final Map<String, Object> params = new HashMap<>();
@@ -144,6 +149,12 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
+    /** Retrieve the list of instruments for which there are data points between the two dates
+     *
+     * @param startdateid identifier of starting date
+     * @param enddateid identifier of ending date
+     * @return List of Instrument objects that meet the requirements
+     */
     public List<Instrument> getInstrumentsGivenDate(final String startdateid,
                                                     final String enddateid) {
         log.info("startdateid = " + startdateid + ", enddateid = " + enddateid);
@@ -167,6 +178,11 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
+    /** Retrieve the list of instruments that measure the specified parameters
+     *
+     * @param parameters comma separated list of parameters of interest
+     * @return List of Instrument objects that meet the requirements
+     */
     public List<Instrument> getInstrumentsGivenParams(final String parameters) {
         log.info("parameters = " + parameters);
         log.info("query = " + GET_INSTRUMENTS_GIVEN_PARAMS.toString());
@@ -189,6 +205,13 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
+    /** Retrieve the list of instruments given the date and list of parameters for which there is data
+     *
+     * @param startdateid identifier of starting date
+     * @param enddateid identifier of ending date
+     * @param parameters comma separated list of parameters of interest
+     * @return List of Instrument objects that meet the requirements
+     */
     public List<Instrument> getInstrumentsGivenDateAndParams(final String startdateid,
                                                              final String enddateid,
                                                              final String parameters) {
@@ -214,6 +237,7 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
+    // Load all external objects of the instrument, which are it's class, observatory where it is located, operating modes and notes
     private void loadExternals(Instrument instrument) {
         if(instrument.getClassType() == null) instrument.setClassType(this.classTypeRepository.findClassType(instrument.getClassTypeId()));
         if(instrument.getObservatory() == null) instrument.setObservatory(this.observatoryRepository.findObservatory(instrument.getObservatoryId()));
@@ -221,8 +245,9 @@ public final class InstrumentRepository implements IInstrumentRepository {
         if(instrument.getNote() == null) instrument.setNote(this.noteRepository.findNote(instrument.getNoteId()));
     }
 
-    /**
-     * @return
+    /** Retrieve the total number of instruments available
+     *
+     * @return count of all instruments
      */
     @Override
     public long totalInstruments() {
@@ -230,8 +255,7 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instrumentMap.size();
     }
 
-    /**
-     * @return
+    /** Refresh from the database all of the instruments
      */
     @Override
     public void refreshInstruments() {

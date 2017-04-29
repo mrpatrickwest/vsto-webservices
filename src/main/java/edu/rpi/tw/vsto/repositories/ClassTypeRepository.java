@@ -16,7 +16,7 @@ import java.util.*;
 @Transactional
 public final class ClassTypeRepository implements IClassTypeRepository {
 
-    public final Logger log = LoggerFactory.getLogger(ClassTypeRepository.class);
+  public final Logger log = LoggerFactory.getLogger(ClassTypeRepository.class);
 
 	private Map<Integer, VstoClassType> classTypeMap = null;
 
@@ -30,9 +30,10 @@ public final class ClassTypeRepository implements IClassTypeRepository {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
-	/**
-	 * @param id
-	 * @return
+	/** Retrieve the VSTO class given its identifier
+   *
+	 * @param id identifier of the class of interest
+	 * @return VstoClassType object of the given identifier
 	 */
 	public VstoClassType findClassType(int id) {
 		VstoClassType type = null;
@@ -43,9 +44,10 @@ public final class ClassTypeRepository implements IClassTypeRepository {
 		return type;
     }
 
-	/**
-	 * @param classType
-	 * @return
+	/** Retrieves the children of the specified parent class
+   *
+	 * @param classType The parent class
+	 * @return List of VstoClassType instances that are the children of the specified parent
 	 */
 	public List<VstoClassType> findChildren(VstoClassType classType) {
         List<VstoClassType> children = new ArrayList<>();
@@ -60,9 +62,10 @@ public final class ClassTypeRepository implements IClassTypeRepository {
         return children;
     }
 
-	/**
-	 * @param refresh
-	 * @return
+	/** Retrieve all classes
+   *
+	 * @param refresh if true then go to the database to retrieve the list
+	 * @return List of VstoClassType instances for all classes
 	 */
 	public List<VstoClassType> getClassTypes(boolean refresh) {
 		final Map<String, Object> params = new HashMap<>();
@@ -104,8 +107,9 @@ public final class ClassTypeRepository implements IClassTypeRepository {
 		if(classType.getNoteId() != 0) classType.setNote(noteRepository.findNote(classType.getNoteId()));
 	}
 
-	/**
-	 * @return
+	/** Retrieve the total number of classes in VSTO
+   *
+	 * @return total number of classes
 	 */
 	public long totalClassTypes() {
 		long num = 0;
@@ -114,8 +118,7 @@ public final class ClassTypeRepository implements IClassTypeRepository {
 		return num;
     }
 
-	/**
-	 * @return
+	/** Refreshes the list of VSTO classes
 	 */
 	public void refreshClassTypes() {
         getClassTypes(true);
