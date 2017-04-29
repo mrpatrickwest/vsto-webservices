@@ -110,11 +110,11 @@ public final class InstrumentRepository implements IInstrumentRepository {
         return instruments;
     }
 
-	  /** Retrieve the list of all instruments
+	/** Retrieve the list of all instruments
      *
      * @param refresh if true then go back to the database to retrieve the list
-	   * @return List of instrument objects that meet the requirements
-	   */
+	 * @return List of instrument objects that meet the requirements
+	 */
     @Override
     public List<Instrument> getInstruments(boolean refresh) {
         final Map<String, Object> params = new HashMap<>();
