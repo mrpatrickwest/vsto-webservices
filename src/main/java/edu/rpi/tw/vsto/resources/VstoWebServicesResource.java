@@ -20,7 +20,7 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
- * Created by westp on 2/19/17.
+ * Created by pwest on 2/19/17.
  */
 @RestController
 public class VstoWebServicesResource
@@ -36,6 +36,15 @@ public class VstoWebServicesResource
     @Autowired
     ICedarFileRepository cedarFileRepository;
 
+    /** Retrieve the list of instruments given the query string parameters
+     *
+     * Example output: {"instruments": [{"kinst": 5340, name: "Millstone Hill Fabrey Perot", class: "Fabrey Perot"}]}
+     *
+     * @param startdateid retrieve instruments that have data points starting with this date identifier
+     * @param enddateid retrieves instruments that have data points ending with this date identifer (required if startdateid is provided)
+     * @param params comma separated list of parameters that an instrument collects data
+     * @return JSON representation of instruments
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/instruments", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getInstruments(@RequestParam(value = "startdateid", required = false, defaultValue = "") final String startdateid,
@@ -79,6 +88,73 @@ public class VstoWebServicesResource
         return response;
     }
 
+    /** Retrieves information about the specified instrument
+     *
+     * Example Output:
+     * {
+     *   "classTypeId": 23,
+     *   "observatoryId": 0,
+     *   "opModeId": 0,
+     *   "noteId": 0,
+     *   "kinst": 5340,
+     *   "name": "Millstone Hill Fabry-Perot",
+     *   "prefix": "MFP",
+     *   "description": "The Millstone Hill Fabry Perot interferometer is operated by MIT in cooperation with the University of Pittsburgh. The interferometer is located near the Millstone Hill incoherent scatter radar at latitude 42 degrees 37 minutes North (42.62) and longitude 71 degrees 27 minutes West (-71.45). Mean local solar time differs from UT by -(4 hour 46 minutes). The local magnetic field has a 15 degree variation to the West and an inclination of 72 degrees.",
+     *   "class_type": {
+     *     "parentId": 15,
+     *     "noteId": 0,
+     *     "id": 23,
+     *     "name": "FabryPerot",
+     *     "parent": {
+     *       "parentId": 5,
+     *       "noteId": 0,
+     *       "id": 15,
+     *       "name": "Interferometer",
+     *       "parent": {
+     *         "parentId": 1,
+     *         "noteId": 0,
+     *         "id": 5,
+     *         "name": "OpticalInstrument",
+     *         "parent": {
+     *           "parentId": 0,
+     *           "noteId": 0,
+     *           "id": 1,
+     *           "name": "Instrument"
+     *         }
+     *       }
+     *     }
+     *   },
+     *   "op_mode": [
+     *     {
+     *       "id": 262,
+     *       "kindat": 7001,
+     *       "kinst": 5340,
+     *       "description": "Tn Em Vn vertical meas in zero vel ref"
+     *     },
+     *     {
+     *       "id": 264,
+     *       "kindat": 7002,
+     *       "kinst": 5340,
+     *       "description": "Tn Em Vn combined meas in zero vel ref"
+     *     },
+     *     {
+     *       "id": 263,
+     *       "kindat": 17001,
+     *       "kinst": 5340,
+     *       "description": "Vn derived data from kindat 7001"
+     *     },
+     *     {
+     *       "id": 265,
+     *       "kindat": 17002,
+     *       "kinst": 5340,
+     *       "description": "Vn derived data from kindat 7002"
+     *     }
+     *   ]
+     * }
+     *
+     * @param kinst identifier of the instrument interested in
+     * @return JSON representation of the instrument's information
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/instrument/{kinst:.*}", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public Instrument getInstrument(@PathVariable(value="kinst") final int kinst) {
@@ -89,6 +165,15 @@ public class VstoWebServicesResource
         return null;
     }
 
+    /** Retrieve the list of parameters given the query string parameters
+     *
+     * Example output: {"parameters": [{"name":"Tn","id":810}]}
+     *
+     * @param startdateid retrieve parameters that have data points starting with this date identifier
+     * @param enddateid retrieves parameters that have data points ending with this date identifer (required if startdateid is provided)
+     * @param kinst identifier of the instrument that measures the parameters
+     * @return JSON representation of parameters
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/parameters", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getParameters(@RequestParam(value = "startdateid", required = false, defaultValue = "") final String startdateid,
@@ -142,6 +227,22 @@ public class VstoWebServicesResource
         return response;
     }
 
+    /** Retrieves information about the specified parameter
+     *
+     * Example Output:
+     * {
+     *   "noteId": 0,
+     *   "id": 810,
+     *   "short_name": "Neutral temperature",
+     *   "long_name": "Tn",
+     *   "madrigal_name": "tn",
+     *   "units": "K",
+     *   "scale": "1."
+     * }
+     *
+     * @param param identifier of the parameter interested in
+     * @return JSON representation of the parameter
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/parameter/{param:.*}", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public Parameter getParameter(@PathVariable(value="param") final int param) {
@@ -152,6 +253,32 @@ public class VstoWebServicesResource
         return null;
     }
 
+    /** Retrieve the list of years where data points have been collected
+     *
+     * Example output:
+     * {
+     *   "years": [
+     *     { "year": "1989" },
+     *     { "year": "1990" },
+     *     { "year": "1991" },
+     *     { "year": "1992" },
+     *     { "year": "1993" },
+     *     { "year": "1994" },
+     *     { "year": "1995" },
+     *     { "year": "1996" },
+     *     { "year": "1997" },
+     *     { "year": "1998" },
+     *     { "year": "1999" },
+     *     { "year": "2000" },
+     *     { "year": "2001" },
+     *     { "year": "2002" }
+     *   ]
+     * }
+     *
+     * @param kinst identifier of an instrument
+     * @param params comma separated list of parameter identifiers
+     * @return JSON object with the return years
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/years", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getYears(@RequestParam(value = "kinst", required = false, defaultValue = "") final String kinst,
@@ -179,6 +306,25 @@ public class VstoWebServicesResource
         return response;
     }
 
+    /** Retrieves list of months for which there are data points
+     *
+     * Example output: {"months":[{"month":"1"},{"month":"2"},{"month":"5"},{"month":"10"},{"month":"11"},{"month":"12"}]}
+     * {
+     *   "months": [
+     *     { "month": "1" },
+     *     { "month": "2" },
+     *     { "month": "5" },
+     *     { "month": "10" },
+     *     { "month": "11" },
+     *     { "month": "12" }
+     *   ]
+     * }
+     *
+     * @param year year of interest
+     * @param kinst identifier of the instrument for which there is data
+     * @param params comma separated list of parameter identifiers for which there are data points
+     * @return JSON representation of the list
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/months", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getMonths(@RequestParam(value = "year") final String year,
@@ -207,6 +353,37 @@ public class VstoWebServicesResource
         return response;
     }
 
+    /** Retrieves the days of the month and year where there are data points
+     *
+     * Example output:
+     * {
+     *   "days": [
+     *     { "day": "13" },
+     *     { "day": "14" },
+     *     { "day": "15" },
+     *     { "day": "16" },
+     *     { "day": "17" },
+     *     { "day": "18" },
+     *     { "day": "19" },
+     *     { "day": "20" },
+     *     { "day": "22" },
+     *     { "day": "23" },
+     *     { "day": "24" },
+     *     { "day": "25" },
+     *     { "day": "27" },
+     *     { "day": "28" },
+     *     { "day": "29" },
+     *     { "day": "30" },
+     *     { "day": "31" }
+     *   ]
+     * }
+     *
+     * @param year year of interest
+     * @param month month of interest
+     * @param kinst identifier of the instrument for which there are data points
+     * @param params comma separated list of parameters for which there are data points
+     * @return JSON representation of the day list
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/days", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getDays(@RequestParam(value = "year") final String year,
@@ -236,6 +413,15 @@ public class VstoWebServicesResource
         return response;
     }
 
+    /** Retrieve the dataid given the year, month and day
+     *
+     * Example output: {"date_id":17672}
+     *
+     * @param year year of interest
+     * @param month month of interest
+     * @param day day of interest
+     * @return JSON representation of the result
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/dateid", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getDateId(@RequestParam(value = "year") final String year,
@@ -257,6 +443,16 @@ public class VstoWebServicesResource
         return response;
     }
 
+    /** Retrieves the list of files that contains the data points for the given start and end dates and instrument and parameters
+     *
+     * Example output: {"files":[{"file_name":"mfp980109a"}]}
+     *
+     * @param startdateid starting date for which there are data points
+     * @param enddateid ending date for which there are data points
+     * @param kinst identifier of the instrument that has collected the data points
+     * @param params comma separated list of parameters for which there is data
+     * @return JSON representation of the file list
+     */
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/files", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String getFiles(@RequestParam(value = "startdateid") final String startdateid,
