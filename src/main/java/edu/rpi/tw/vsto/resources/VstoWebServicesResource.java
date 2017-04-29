@@ -259,13 +259,10 @@ public class VstoWebServicesResource
 
     @CrossOrigin(origins = "*", methods = { RequestMethod.GET })
     @RequestMapping( value = "/files", produces = APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public String getDateId(@RequestParam(value = "startdateid") final String startdateid,
-                            @RequestParam(value = "enddateid") final String enddateid,
-                            @RequestParam(value = "kinst") final String kinst,
-                            @RequestParam(value = "year", required = false, defaultValue = "") final String year,
-                            @RequestParam(value = "month", required = false, defaultValue = "") final String month,
-                            @RequestParam(value = "day", required = false, defaultValue = "") final String day,
-                            @RequestParam(value = "params", required = false, defaultValue = "") final String params)
+    public String getFiles(@RequestParam(value = "startdateid") final String startdateid,
+                           @RequestParam(value = "enddateid") final String enddateid,
+                           @RequestParam(value = "kinst") final String kinst,
+                           @RequestParam(value = "params", required = false, defaultValue = "") final String params)
     {
         String response = "{}";
         List<CedarFile> files = this.cedarFileRepository.getFiles(kinst, startdateid, enddateid);
@@ -283,7 +280,7 @@ public class VstoWebServicesResource
                 jobj.put("files", jfiles);
                 response = jobj.toString();
             } catch(Exception e) {
-                log.error( "Failed to build month response " + e.getMessage());
+                log.error( "Failed to build files response " + e.getMessage());
             }
         }
         return response;
