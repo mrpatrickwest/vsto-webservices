@@ -31,6 +31,8 @@ Example output: \{"instruments": \[\{"kinst": 5340, name: "Millstone Hill Fabrey
 Retrieves information about a single instrument as a JSON object
 * kinst, required, instrument identifier you are interested in
 
+Example: /kinst/5340
+
 Example output: \{"classTypeId":23,"observatoryId":0,"opModeId":0,"noteId":0,"kinst":5340,"name":"Millstone Hill Fabry-Perot","prefix":"MFP","description":"The Millstone Hill Fabry Perot interferometer is operated by MIT in cooperation with the University of Pittsburgh. The interferometer is located near the Millstone Hill incoherent scatter radar at latitude 42 degrees 37 minutes North (42.62) and longitude 71 degrees 27 minutes West (-71.45). Mean local solar time differs from UT by -(4 hour 46 minutes). The local magnetic field has a 15 degree variation to the West and an inclination of 72 degrees.","class_type":\{"parentId":15,"noteId":0,"id":23,"name":"FabryPerot","parent":\{"parentId":5,"noteId":0,"id":15,"name":"Interferometer","parent":\{"parentId":1,"noteId":0,"id":5,"name":"OpticalInstrument","parent":\{"parentId":0,"noteId":0,"id":1,"name":"Instrument"\}\}\}\},"op_mode":\[\{"id":262,"kindat":7001,"kinst":5340,"description":"Tn Em Vn vertical meas in zero vel ref"\},\{"id":264,"kindat":7002,"kinst":5340,"description":"Tn Em Vn combined meas in zero vel ref"\},\{"id":263,"kindat":17001,"kinst":5340,"description":"Vn derived data from kindat 7001"\},\{"id":265,"kindat":17002,"kinst":5340,"description":"Vn derived data from kindat 7002"\}\]\}
 
 ### Parameters
@@ -49,6 +51,8 @@ Example output: \{"parameters": \[\{"name":"Tn","id":810\}\]\}
 Retrieves information about the requested parameter
 * param, required, identifier of the requested parameter
 
+Example: /parameter/810
+
 Example output: \{"noteId":0,"id":810,"short_name":"Neutral temperature","long_name":"Tn","madrigal_name":"tn","units":"K","scale":"1."\}
 
 ### Years
@@ -57,6 +61,8 @@ Example output: \{"noteId":0,"id":810,"short_name":"Neutral temperature","long_n
 Retrieves the list of years for which there is data for the given query string
 * kinst, optional, identifier of the instrument
 * params, optional, comma separated list of parameter identifiers
+
+Example: /years?kinst=5340
 
 Example output: \{"years":\[\{"year":"1989"\},\{"year":"1990"\},\{"year":"1991"\},\{"year":"1992"\},\{"year":"1993"\},\{"year":"1994"\},\{"year":"1995"\},\{"year":"1996"\},\{"year":"1997"\},\{"year":"1998"\},\{"year":"1999"\},\{"year":"2000"\},\{"year":"2001"\},\{"year":"2002"\}\]\}
 
@@ -67,6 +73,8 @@ Retrieves the list of months for which there is data for the given query string
 * year, required
 * kinst, optional, identifier of the instrument
 * params, optional, comma separated list of parameter identifiers
+
+Example: /months?kinst=5340&year=1998
 
 Example output: \{"months":\[\{"month":"1"\},\{"month":"2"\},\{"month":"5"\},\{"month":"10"\},\{"month":"11"\},\{"month":"12"\}\]\}
 
@@ -79,6 +87,8 @@ Retrieves the list of days for which there is data for the given query string
 * kinst, optional, identifier of the instrument
 * params, optional, comma separated list of parameter identifiers
 
+Example: /days?kinst=5340&year=1998&month=5
+
 Example output: \{"days":\[\{"day":"13"\},\{"day":"14"\},\{"day":"15"\},\{"day":"16"\},\{"day":"17"\},\{"day":"18"\},\{"day":"19"\},\{"day":"20"\},\{"day":"22"\},\{"day":"23"\},\{"day":"24"\},\{"day":"25"\},\{"day":"27"\},\{"day":"28"\},\{"day":"29"\},\{"day":"30"\},\{"day":"31"\}\]\}
 
 ### DateID
@@ -86,8 +96,7 @@ Example output: \{"days":\[\{"day":"13"\},\{"day":"14"\},\{"day":"15"\},\{"day":
 
 Retrieves the date identifier for the given year, month and day. This date identifier is used in the above requests
 
-Example:
-/dateid?year=1998&month=5&day=20
+Example: /dateid?year=1998&month=5&day=20
 
 Example Output: \{"date_id":17672\}
 
@@ -98,3 +107,8 @@ Retrieves the list of files for which there is data given the query string
 * startdateid, required, beginning date
 * enddateid, required, ending date
 * kinst, required, instrument identifier
+
+Example: /files?kinst=5340&startdateid=17672&enddateid=17682
+
+Example Output: \{"files":\[\{"file_name":"mfp980109a"\}\]\}
+
